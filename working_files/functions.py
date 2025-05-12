@@ -10,6 +10,7 @@ from datetime import datetime, date
 import pandas_datareader.data as web
 import statistics as stats
 import mplfinance as mpf
+from 
 
 def format_date(date_string):
     try:
@@ -111,6 +112,18 @@ def tracking(stock, stock_string):
     
 
 
+def moving_average(df, time_period):
+    gdp_data = df['gdp_per_capita'].values
+    data = []
+    data_together = []
+    for item in gdp_data:
+        data.append(item)
+        if len(data) > time_period:
+            del(data[0])
+        data_together.append(round(stats.mean(data),0))
+
+    df[f'moving_average_across_{time_period} years'] = pd.Series(data_together, df.index)
+    return df
 
 
 
