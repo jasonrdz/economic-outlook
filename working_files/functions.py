@@ -10,7 +10,6 @@ from datetime import datetime, date
 import pandas_datareader.data as web
 import statistics as stats
 import mplfinance as mpf
-from 
 
 def format_date(date_string):
     try:
@@ -60,26 +59,16 @@ def adding_relevant_columns(stock):
     stock['daily_return'] = ((stock['Close'] - stock['Close'].shift(1)) 
                              / stock['Close'].shift(1)) * 100
     # calculating moving_average
-
     moving_window = 30
-    
-    closing = stock['Close']
-    closing.values
-    
-    calculated_moving=  []
-    
-    grouped  = []
-    for price in closing.values:
-        grouped.append(price)
-        if len(grouped) > moving_window:
-            del(grouped[0])
-        calculated_moving.append(stats.mean(grouped))
-    
-    stock_data = stock
-    
-    stock = stock_data.assign(calculated_moving = 
-                                   pd.Series(calculated_moving,
-                                             index = stock_data.index))
+    stock['moving_average'] = stock['Close'].rolling(window=moving_window, min_periods=1).mean()
+
+
+    # adding in a ema tracker
+
+
+    stock['ema'] = stock['Close'].ewm(span=50, adjust=False).mean()
+
+
     return stock
 
 
@@ -103,11 +92,14 @@ def closing_price(*tickers, labels=None):
 
 def tracking(stock, stock_string):
     stock['Close'].plot()
-    stock['calculated_moving'].plot()
+    stock['moving_average'].plot()
     plt.xlabel('Date')
     plt.ylabel('Stock Price')
     plt.legend()
     plt.title(f'closing price and moving average for {stock_string}')
+    folder = 'working_files/moving_averages'
+    os.makedirs(folder, exist_ok=True)
+    plt.savefig(f'{folder}/{stock_string}.png')
     return plt.show()
     
 
@@ -122,7 +114,7 @@ def moving_average(df, time_period):
             del(data[0])
         data_together.append(round(stats.mean(data),0))
 
-    df[f'moving_average_across_{time_period} years'] = pd.Series(data_together, df.index)
+    df[f'moving_average_across_{time_period}_years'] = pd.Series(data_together, df.index)
     return df
 
 
