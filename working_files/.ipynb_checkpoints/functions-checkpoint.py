@@ -118,5 +118,61 @@ def moving_average(df, time_period):
     return df
 
 
+def dates():
+    user_input = input('Hello, how many months are you looking to date back? (default 12): ')
+    if user_input.strip() == '':
+        looking = 12
+    else:
+        try:
+            looking = int(user_input)
+        except ValueError:
+            print("Invalid input, using default of 12 months.")
+            looking = 12
+    today = pd.to_datetime('today').normalize()
+    start_date = today - pd.DateOffset(months=looking)
+    return [start_date.strftime('%Y-%m-%d'), today.strftime('%Y-%m-%d')]
 
 
+
+def seaborn_plotting(scores= scores, pvalues = pvalues, pairs = pairs):
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(
+        pvalues, 
+        xticklabels=sample_names,
+        yticklabels=sample_names,
+        cmap='RdYlGn_r',
+        mask=(pvalues >= .10)
+    )
+    plt.title('Cointegration p-values')
+    plt.show()
+
+def find_pairs(data):
+    n = data.shape[1]
+    score_matrix = np.zeros((n, n))
+    pvalue_matrix = np.ones((n, n))
+    keys = list(data.columns)
+    pairs = []
+    for i in range(n):
+        for j in range(i+1, n):
+            s1 = data[keys[i]]
+            s2 = data[keys[j]]
+            # Combine and drop rows with NaN or inf in either series
+            combined = np.column_stack([s1, s2])
+            mask = np.isfinite(combined).all(axis=1)
+            s1_clean = s1.values[mask]
+            s2_clean = s2.values[mask]
+            if len(s1_clean) > 0 and len(s2_clean) > 0:
+                result = coint(s1_clean, s2_clean)
+                score = result[0]
+                pvalue = result[1]
+                score_matrix[i, j] = score
+                pvalue_matrix[i, j] = pvalue
+                if pvalue < .05:
+                    pairs.append((keys[i], keys[j]))
+    return score_matrix, pvalue_matrix, pairs
+    
+
+def algo_trading(my_data = df):
+    data = find_pairs(my_data)
+    scores, pvalues, pairs = find_pairs(df)
+    return seaborn_plotting(scores = scores, pvalues = pvalues, pairs=  pairs)
