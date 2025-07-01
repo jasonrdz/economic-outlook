@@ -33,11 +33,11 @@ def finding_stock_info(ticker, beginning_year):
 def stock_insights(ticker):
     # market cap, determines company's value given their opening price times
     # volume traded
-    ticker['market_cap'] = ticker['Open'] * ticker['Volume']
+    ticker['market_cap'] = ticker['open'] * ticker['volume']
     # daily return 
     # ((Today's Closing Price - Yesterday's Closing Price) 
     # / Yesterday's Closing Price) * 100
-    ticker['daily_return'] = ((ticker['Close'] - ticker['Close'].shift(1)) / ticker['Close'].shift(1)) * 100
+    ticker['daily_return'] = ((ticker['close'] - ticker['close'].shift(1)) / ticker['close'].shift(1)) * 100
 
     return ticker
 
@@ -54,19 +54,19 @@ def finding_stock_info(ticker, starting_year):
 
 def adding_relevant_columns(stock):
     # market cap is relevant given there is a measurement of the company's size
-    stock['market_cap'] = stock['Open'] * stock['Volume']
+
+    stock.index = pd.to_datetime(stock.index)
+    stock['market_cap'] = stock['open'] * stock['volume']
     # daily return
-    stock['daily_return'] = ((stock['Close'] - stock['Close'].shift(1)) 
-                             / stock['Close'].shift(1)) * 100
+    stock['daily_return'] = ((stock['close'] - stock['close'].shift(1)) 
+                        / stock['close'].shift(1)) * 100
     # calculating moving_average
     moving_window = 30
-    stock['moving_average'] = stock['Close'].rolling(window=moving_window, min_periods=1).mean()
-
-
+    stock['moving_average'] = stock['close'].rolling(window=moving_window, min_periods=1).mean()
     # adding in a ema tracker
+    stock['ema'] = stock['close'].ewm(span=50, adjust=False).mean()
+    stock['vwap_proxy'] = (stock['high'] + stock['low'] + stock['close']) / 3
 
-
-    stock['ema'] = stock['Close'].ewm(span=50, adjust=False).mean()
 
 
     return stock
@@ -91,7 +91,7 @@ def closing_price(*tickers, labels=None):
 
 
 def tracking(stock, stock_string):
-    stock['Close'].plot()
+    stock['close'].plot()
     stock['moving_average'].plot()
     plt.xlabel('Date')
     plt.ylabel('Stock Price')
@@ -132,20 +132,6 @@ def dates():
     start_date = today - pd.DateOffset(months=looking)
     return [start_date.strftime('%Y-%m-%d'), today.strftime('%Y-%m-%d')]
 
-
-
-def seaborn_plotting(scores= scores, pvalues = pvalues, pairs = pairs):
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(
-        pvalues, 
-        xticklabels=sample_names,
-        yticklabels=sample_names,
-        cmap='RdYlGn_r',
-        mask=(pvalues >= .10)
-    )
-    plt.title('Cointegration p-values')
-    plt.show()
-
 def find_pairs(data):
     n = data.shape[1]
     score_matrix = np.zeros((n, n))
@@ -170,9 +156,17 @@ def find_pairs(data):
                 if pvalue < .05:
                     pairs.append((keys[i], keys[j]))
     return score_matrix, pvalue_matrix, pairs
-    
 
-def algo_trading(my_data = df):
-    data = find_pairs(my_data)
-    scores, pvalues, pairs = find_pairs(df)
-    return seaborn_plotting(scores = scores, pvalues = pvalues, pairs=  pairs)
+
+def seaborn_plotting(scores, pvalues , pairs ):
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(
+        pvalues, 
+        xticklabels=sample_names,
+        yticklabels=sample_names,
+        cmap='RdYlGn_r',
+        mask=(pvalues >= .10)
+    )
+    plt.title('Cointegration p-values')
+    plt.show()
+
