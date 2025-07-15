@@ -1,3 +1,4 @@
-fred/key/fred_key.json
+./key/*
+./graphs/
 economic_outlook/working_files/functions.py
 economic_outlook/working_files/working_files.ipynb
