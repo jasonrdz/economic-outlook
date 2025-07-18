@@ -1,12 +1,12 @@
-economic_outlook/graphs/
+graphs/
 
-economic_outlook/airflow_venv/
+airflow_venv/
 
-economic_outlook/email/
+email/
 
-economic_outlook/macro_environment/
+macro_environment/
 
-economic_outlook/working_files/
+working_files/
 
 
 
