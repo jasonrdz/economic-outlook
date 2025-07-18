@@ -1,12 +1,12 @@
-graphs/*
+./graphs/*
 
-airflow_venv/*
+./airflow_venv/*
 
-email/*
+./email/*
 
-macro_environment/*
+./macro_environment/*
 
-working_files/*
+./working_files/*
 
 
 
