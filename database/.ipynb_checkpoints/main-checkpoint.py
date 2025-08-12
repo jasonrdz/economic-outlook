@@ -1,5 +1,6 @@
 import duckdb as duck
 from openbb import obb
+import polars as pl
 
 import os
 os.chdir('..')
@@ -44,6 +45,43 @@ stocks = [
     "SMR" # Nuscale Power Corp
 ]
 
+
+con = duck.connect('./database/stocks.db')
+
+all_data = []
+
 for stock in stocks:
-    stock_data = adding_relevant_columns(obb.equity.price.historical(symbol = stock, provider = 'yfinance', start_date = '2007-01-01').to_df())
-    print(stock_data.tail())
+    stock_data = adding_relevant_columns(
+        obb.equity.price.historical(
+            symbol=stock,
+            provider='yfinance',
+            start_date='2007-01-01'
+        ).to_df()
+    )
+    pl_df = (
+        pl.from_pandas(stock_data.reset_index())
+        .with_columns([pl.lit(stock).alias("Symbol")])
+    )
+    all_data.append(pl_df)
+
+
+
+for i, df in enumerate(all_data):
+    print(f"DataFrame {i}: {df.columns}")
+# Concatenate all Polars DataFrames
+# data_read = pl.concat(all_data)
+
+# data_read
+
+
+# con.execute('CREATE TABLE IF NOT EXISTS stock_overview as SELECT * FROM data_read')
+
+# for i, df in enumerate(all_data):
+#     print(f"DataFrame {i}: {df.columns}")
+    
+
+
+
+
+
+# print(pl.from_pandas(con.execute('Select * from stock_overview').fetchdf()))

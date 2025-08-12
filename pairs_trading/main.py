@@ -55,7 +55,8 @@ stocks = [
     "ADBE" ,# Adobe
     "BRK-B",# berkshire hathaway
     "OKLO", # Oklo Inc
-    "SMR" # Nuscale Power Corp
+    "SMR" ,# Nuscale Power Corp
+    # "FIG" # FIGMA 
 ]
 
 

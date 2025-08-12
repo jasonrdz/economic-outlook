@@ -151,7 +151,7 @@ def calculating_spread(correlated_stocks, data_dictionary):
 def heatmap_of_correlation(correlation):
     os.makedirs('./graphs/heat_graph/', exist_ok = True)
     directory = './graphs/heat_graph/'
-    figure(figsize = (18,12), dpi = 400)
+    figure(figsize = (36,24), dpi = 800)
     plotted = sns.heatmap(correlation, annot = True)
     plt.savefig(f'{directory} correlation_heat_map.png', dpi = 25, bbox_inches = 'tight')
     plt.close()

@@ -10,6 +10,9 @@ from datetime import datetime, date
 import pandas_datareader.data as web
 import statistics as stats
 import mplfinance as mpf
+from openbb import obb
+obb.user.preferences.output_type = 'dataframe'
+
 
 def format_date(date_string):
     try:
@@ -169,4 +172,3 @@ def seaborn_plotting(scores, pvalues , pairs ):
     )
     plt.title('Cointegration p-values')
     plt.show()
-
