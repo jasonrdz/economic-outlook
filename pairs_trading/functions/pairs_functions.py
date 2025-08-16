@@ -4,11 +4,11 @@ import pandas as pd
 # system and operating system to help me grab some functions
 import sys
 import os
-os.chdir('..')
+# os.chdir('..')
 sys.path.append('./economic_outlook/working_files')
 from functions import *
 
-sys.path.append('./economic_outlook/pairs_trading')
+# sys.path.append('./economic_outlook/pairs_trading')
 
 
 import seaborn as sns
@@ -19,7 +19,7 @@ import statsmodels.tsa.stattools as ts
 from statsmodels.tsa.stattools import adfuller
 obb.user.preferences.output_type = 'dataframe'
 
-os.chdir('./economic_outlook')
+# os.chdir('./economic_outlook')
 
 
 
@@ -153,7 +153,7 @@ def heatmap_of_correlation(correlation):
     directory = './graphs/heat_graph/'
     figure(figsize = (36,24), dpi = 800)
     plotted = sns.heatmap(correlation, annot = True)
-    plt.savefig(f'{directory} correlation_heat_map.png', dpi = 25, bbox_inches = 'tight')
+    plt.savefig(f'{directory} correlation_heat_map', dpi = 25, bbox_inches = 'tight')
     plt.close()
 
 
@@ -162,7 +162,7 @@ def price_ratio_w_mean(spreads):
     for keys, values in spreads.items():
         # directory 
         making = os.makedirs('./graphs/price_ratios/w_mean/', exist_ok = True)
-        location = (f'./graphs/price_ratios/w_mean/')
+        location = (f'.//graphs/price_ratios/w_mean/')
         stock1,stock2 = keys[0], keys[1]
         ratio = values['ratio']
         figure(figsize = (6,4), dpi = 400)
@@ -174,7 +174,7 @@ def price_ratio_w_mean(spreads):
         plt.legend()
         plt.grid(True)
         plt.tight_layout()
-        plt.savefig(f'{location} Price Ratio between {stock1} and {stock2}.png')
+        plt.savefig(f'{location} Price Ratio between {stock1} and {stock2}')
         plt.close()
 
 
@@ -195,13 +195,13 @@ def z_score_ratio(spreads):
         plt.axhline(-1.25, color='green') # 95% of our data will lie between these bounds.
         plt.legend(loc = 'best')
         plt.title(f'Z score of Ratio of {stock1} to {stock2}')
-        plt.savefig(f'{location}z_score_ratio_{stock1}_to_{stock2}')
+        plt.savefig(f'{location}/z_score_ratio_{stock1}_to_{stock2}')
         plt.close()
 
 
 def rolling_avg_z_scores(spreads):
     for key, values in spreads.items():
-        os.makedirs('./graphs/price_ratios/rolling_average_w_ratio/', exist_ok = True)
+        os.makedirs('/graphs/price_ratios/rolling_average_w_ratio/', exist_ok = True)
 
         location = './graphs/price_ratios/rolling_average_w_ratio/'
         
@@ -227,7 +227,7 @@ def rolling_avg_z_scores(spreads):
         plt.xlabel('Date')
         plt.ylabel('Ratio')
         plt.title(f'Ratio between {stock1} and {stock2} with 5, 20, 45 Day Moving Averages')
-        plt.savefig(f'{location}price_ratio_of{stock1}_to_{stock2}_w_moving_averages')
+        plt.savefig(f'{location}/price_ratio_of{stock1}_to_{stock2}_w_moving_averages')
         plt.close()
 
 
@@ -257,15 +257,15 @@ def moving_average_zscore_bands(spreads):
         plt.axhline(smallest_band, color='green', linestyle='--')
         plt.legend(['Rolling Ratio z-score', 'Mean', big_band,bigger_band,small_band,smallest_band])
         plt.title(f'{stock1} and {stock2} z relationship')
-        plt.savefig(f'{location} {stock1} and {stock2} z relationship')
+        plt.savefig(f'{location}_{stock1}_and_{stock2}_z_relationship.png')
         plt.close()
         # plt.show()   
 
 
 
 def buying_selling(spreads):
-    directory = os.makedirs('./graphs/techniques/pairs_trading/buying_selling', exist_ok = True)
-    location = './graphs/techniques/pairs_trading/buying_selling/'
+    directory = os.makedirs('./graphs/techniques//buying_selling', exist_ok = True)
+    location = './graphs/techniques//buying_selling/'
     
     for key,values in spreads.items():
         stock1,stock2 = key[0],key[1]
@@ -288,6 +288,6 @@ def buying_selling(spreads):
         plt.legend(['Ratio', 'Buy Signal', 'Sell Signal'])
         plt.ylabel(f'Ratio Price')
         plt.title(f'Relationship {stock1} to {stock2}')
-        plt.savefig(f'{location} Relationship from {stock1} and {stock2} buy or sell?')
+        plt.savefig(f'{location}_Relationship_from_{stock1}_and_{stock2}_buy_or_sell')
         plt.close()
         # plt.show()

@@ -4,25 +4,11 @@ import pandas as pd
 # system and operating system to help me grab some functions
 import sys
 import os
-os.chdir('..')
 
-print(os.getcwd())
-
-sys.path.append('./economic_outlook/working_files/')
-from functions import *
-sys.path.append('./economic_outlook/pairs_trading/functions/')
-from functions.pairs_functions import *
-
-
-
-import seaborn as sns
+from functions.pairs_functions import * 
+import matplotlib
+matplotlib.use('Agg')  # <-- Add this before importing pyplot
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import figure
-from openbb import obb
-import statsmodels.tsa.stattools as ts 
-from statsmodels.tsa.stattools import adfuller
-obb.user.preferences.output_type = 'dataframe'
-
 
 stocks = [
     "AAPL",  # Apple Inc.
@@ -62,11 +48,16 @@ stocks = [
 
 data_dictionary = data_collecter(stocks)
 
+
+
 stock_data, correlation = combining_stock_data(stocks)
+
 
 correlated_stocks = identifying_pairs_stocks_highly_correlated(correlation)
 
+
 stock_spread = calculating_spread(correlated_stocks, data_dictionary)
+
 
 correlation_matrix = heatmap_of_correlation(correlation)
 
@@ -74,8 +65,8 @@ correlation_matrix = heatmap_of_correlation(correlation)
 price_ratio_mean,z_ratio_score_graph,rolling_z_scores_mean = price_ratio_w_mean(stock_spread),z_score_ratio(stock_spread), rolling_avg_z_scores(stock_spread)
 
 
-
 moving_average_bands = moving_average_zscore_bands(stock_spread)
 
 strategy = buying_selling(stock_spread)
 
+print(f'The Script has finished running.')
