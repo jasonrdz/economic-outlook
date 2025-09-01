@@ -4,46 +4,30 @@ import pandas as pd
 # system and operating system to help me grab some functions
 import sys
 import os
+import requests
+from io import StringIO
+
 
 from functions.pairs_functions import * 
 import matplotlib
-matplotlib.use('Agg')  # <-- Add this before importing pyplot
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-stocks = [
-    "AAPL",  # Apple Inc.
-    "MSFT",  # Microsoft Corporation
-    "GOOGL", # Alphabet Inc. (Class A)
-    "AMZN",  # Amazon.com Inc.
-    "META",  # Meta Platforms Inc.
-    "NVDA",  # NVIDIA Corporation
-    "TSLA",  # Tesla Inc.
-    "JPM",   # JPMorgan Chase & Co.
-    "V",     # Visa Inc.
-    "AMD", # AMD 
-    "KO", # Coca Cola
-    "SBUX", #Starbucks
-    "PEP", # Pepsi
-    "GE", # General Electric
-    "GM", # General Motors
-    "NFLX", # Netflix
-    "RBLX", # Roblox
-    "SONY", # Sony
-    "WMT", # Walmart
-    "IBM", # IBM
-    "TGT", # target
-    "COF" ,# Capital One,
-    "PLTR", # Palantir,
-    "MELI", # MercadoLibre
-    "ROAD", #Construction
-    "QUBT", # Quantum Computing
-    "SHOP", # Shopify
-    "ADBE" ,# Adobe
-    "BRK-B",# berkshire hathaway
-    "OKLO", # Oklo Inc
-    "SMR" ,# Nuscale Power Corp
-    # "FIG" # FIGMA 
-]
+url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+headers = {'User-Agent': 'Mozilla/5.0'}
+
+response = requests.get(url, headers=headers)
+html = StringIO(response.text)
+
+tables = pd.read_html(html)
+df = tables[0]  
+stocks = df['Symbol'].tolist()
+
+stocks = list(set(stocks))
+
+
+stocks = [stock for stock in stocks if stock.lower() not in ('brk.b', 'bf.b')]
+
 
 
 data_dictionary = data_collecter(stocks)
