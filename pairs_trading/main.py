@@ -6,27 +6,29 @@ import sys
 import os
 import requests
 from io import StringIO
-
-
+import time
 from functions.pairs_functions import * 
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
-headers = {'User-Agent': 'Mozilla/5.0'}
+html = 'https://www.slickcharts.com/sp500'
 
-response = requests.get(url, headers=headers)
-html = StringIO(response.text)
-
-tables = pd.read_html(html)
-df = tables[0]  
-stocks = df['Symbol'].tolist()
-
-stocks = list(set(stocks))
+sp500_tickers = []
+response = pd.read_html(html)
+table = pd.read_html(html)[0]
 
 
-stocks = [stock for stock in stocks if stock.lower() not in ('brk.b', 'bf.b')]
+for stock in table['Symbol']:
+    if stock == 'BRK.B' or stock == 'BR.B' or stock  == 'BR.F' or stock == 'BF.B':
+        continue
+    sp500_tickers.append(stock)
+    
+        
+stocks = list(set(sp500_tickers))
+
+
+# stocks = [stock for stock in stocks if stock.lower() not in ('brk.b', 'bf.b')]
 
 
 
